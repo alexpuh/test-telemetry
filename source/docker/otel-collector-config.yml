@@ -18,13 +18,17 @@ exporters:
     tls:
       insecure: true
 
-  # Export to Elasticsearch
-  elasticsearch:
+  # Export to Elasticsearch for logs
+  elasticsearch/logs:
     endpoints:
       - http://elasticsearch:9200
     logs_index: otel-logs
+
+  # Export to Elasticsearch for traces  
+  elasticsearch/traces:
+    endpoints:
+      - http://elasticsearch:9200
     traces_index: otel-traces
-    metrics_index: otel-metrics
 
   # Debug exporter for troubleshooting
   logging:
@@ -35,15 +39,15 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/jaeger, elasticsearch, logging]
+      exporters: [otlp/jaeger, elasticsearch/traces, logging]
     
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [elasticsearch, logging]
+      exporters: [logging]
     
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [elasticsearch, logging]
+      exporters: [elasticsearch/logs, logging]
 
