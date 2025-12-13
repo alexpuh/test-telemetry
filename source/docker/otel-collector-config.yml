@@ -1,0 +1,49 @@
+﻿receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+exporters:
+  # Export to Jaeger
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # Export to Elasticsearch
+  elasticsearch:
+    endpoints:
+      - http://elasticsearch:9200
+    logs_index: otel-logs
+    traces_index: otel-traces
+    metrics_index: otel-metrics
+
+  # Debug exporter for troubleshooting
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/jaeger, elasticsearch, logging]
+    
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [elasticsearch, logging]
+    
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [elasticsearch, logging]
+
