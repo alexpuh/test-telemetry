@@ -3,7 +3,7 @@ using Serilog;
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
+        .AddJsonFile("serilog.json", optional: false, reloadOnChange: true)
         .Build())
     .CreateLogger();
 
