@@ -10,11 +10,17 @@ public class ArticlesController(ILogger<ArticlesController> logger) : Controller
     [HttpGet]
     public IEnumerable<DtoArticle> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new DtoArticle
+        logger.LogInformation("Getting articles");
+        
+        var articles = Enumerable.Range(1, 5).Select(index => new DtoArticle
         {
             Id = index,
             Name = Guid.NewGuid().ToString(),
         })
         .ToArray();
+        
+        logger.LogInformation("Returning {ArticleCount} articles", articles.Length);
+        
+        return articles;
     }
 }

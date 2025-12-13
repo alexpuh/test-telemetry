@@ -17,6 +17,7 @@ _ReSharper*.*
 *.gen
 .vs/
 log/
+logs/
 /packages/*
 !/packages/repositories.config
 publish/*
