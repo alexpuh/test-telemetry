@@ -1,0 +1,6 @@
+@webserv_HostAddress = http://localhost:5009
+
+GET {{webserv_HostAddress}}/Articles/
+Accept: application/json
+
+###
