@@ -1,4 +1,7 @@
 using Serilog;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -15,6 +18,29 @@ try
 
     // Add Serilog
     builder.Host.UseSerilog();
+
+    // Add OpenTelemetry
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService("webserv"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.RecordException = true;
+            })
+            .AddHttpClientInstrumentation()
+            .AddSource("webserv.ArticlesController")
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri("http://localhost:4317");
+            }))
+        .WithMetrics(metrics => metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri("http://localhost:4317");
+            }));
 
     // Add services to the container.
     builder.Services.AddControllers();
